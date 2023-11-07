@@ -968,6 +968,29 @@ defmodule FlokiTest do
     assert Floki.find(html, "div > p > span > img + img") == expected
   end
 
+  test "raw_html with attributes as Map type (new option as of Floki v0.35)" do
+    raw_html =
+      ~s(<div id="content"><p><a href="site" class="bar"><span>lol</span><img src="foo.png"/></a></p><br/></div>)
+
+    tree = document!(raw_html, attributes_as_maps: true)
+
+    assert tree = [
+             { "div", %{"id" => "content"}, [
+                 { "p", [], [
+                     { "a", %{ "href" => "site", "class" => "bar" },
+                       [ { "span", [], ["lol"] },
+                         {  "img", %{ "src" => "foo.png" }, [] }
+                       ]
+                     }
+                   ]
+                 },
+                 { "br", [], [] }
+               ]
+             }
+           ]
+
+  end
+
   # Floki.find/2 - Sibling combinator
 
   test "find sibling element" do
